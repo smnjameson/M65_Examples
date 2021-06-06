@@ -1,3 +1,10 @@
 M65 Examples
 
 1 - Raster Rewrite Buffer
+2 - Nybble Color Mode RRB
+
+
+
+
+Setup
+1 - Prepare aseparse65 by running npm install from inside its folder in "_include"
