@@ -1,8 +1,9 @@
-M65 Examples
+**M65 Examples**
 
 1 - Raster Rewrite Buffer
 2 - Nybble Color Mode RRB
-
+3 - DMA Trickery part 1 - Some fractional DMA scaling examples, source code lost :(
+4 - DMA Trickery part 2 - Line drawing DMA, including very unoptimised arbritrary line draw function
 
 
 
