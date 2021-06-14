@@ -19,8 +19,6 @@
 		sta $00 //40 Mhz mode
 }
 
-
-
 .macro enableVIC3Registers () {
 		lda #$00
 		tax 
@@ -50,9 +48,14 @@
 }
 
 .macro disableC65ROM() {
+		//Disable C65 rom protection using
+		//hypervisor trap (see mega65 manual)	
 		lda #$70
 		sta $d640
 		eom
+		//Unmap C65 Roms $d030 by clearing bits 3-7
+		lda #%11111000
+		trb $d030
 }
 
 .macro mapMemory(source, target) {
@@ -131,18 +134,10 @@
 		.byte $81, DestBank
 }
 .macro DMAStep(SourceStep, SourceStepFractional, DestStep, DestStepFractional) {
-		.if(SourceStepFractional != 0) {
-			.byte $82, SourceStepFractional
-		}
-		.if(SourceStep != 1) {
-			.byte $83, SourceStep
-		}
-		.if(DestStepFractional != 0) {
-			.byte $84, DestStepFractional
-		}
-		.if(DestStep != 1) {
-			.byte $85, DestStep
-		}		
+		.byte $82, SourceStepFractional
+		.byte $83, SourceStep
+		.byte $84, DestStepFractional
+		.byte $85, DestStep		
 }
 .macro DMADisableTransparency() {
 		.byte $06
@@ -167,9 +162,11 @@
 	}
 	.word Length //Size of Copy
 
+	//byte 04
 	.word Source & $ffff
 	.byte [Source >> 16] + backByte
 
+	//byte 07
 	.word Destination & $ffff
 	.byte [[Destination >> 16] & $0f]  + backByte
 	.if(Chain) {
@@ -187,8 +184,10 @@
 	}	
 	
 	.word Length //Size of Copy
+	//byte 4
 	.word SourceByte
 	.byte $00
+	//byte 7
 	.word Destination & $ffff
 	.byte [[Destination >> 16] & $0f] 
 	.if(Chain) {
